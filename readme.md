@@ -1,7 +1,7 @@
-#Regrain
+# Regrain
 A simple state management library made for React.
 
-##Main principles
+## Main principles
 
 - The store is made out of three types of elements:
   - Grain – It represents some single value.
