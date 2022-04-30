@@ -76,4 +76,8 @@ export class SubjectStore extends Store {
 		this.values.set(grain, value);
 		this.listeners.get(grain)!.forEach(callback => callback(value));
 	}
+
+	getParent(): Store {
+		return this.parentStore;
+	}
 }
