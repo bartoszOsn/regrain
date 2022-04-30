@@ -1,0 +1,26 @@
+{
+  "name": "regrain",
+  "version": "0.1.0",
+  "description": "Simple state management library for React.",
+  "main": "dist/index.js",
+  "author": "Bartosz Osiński",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "@types/react": "^18.0.6",
+    "jest": "^27.5.1",
+    "parcel": "^2.5.0",
+    "react": "^18.0.0",
+    "ts-jest": "^27.1.4",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  },
+  "scripts": {
+    "build": "parcel build src/index.ts",
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0"
+  }
+}
