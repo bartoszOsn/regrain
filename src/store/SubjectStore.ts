@@ -57,7 +57,7 @@ export class SubjectStore extends Store {
 
 		callback(this.values.get(changedAtom));
 
-		return () => this.listeners.delete(changedAtom);
+		return () => this.listeners.get(changedAtom)!.delete(callback);
 	}
 
 	override get<T>(grain: Grain<T>): T {
