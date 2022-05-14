@@ -1,2 +1,2 @@
 export * from './BaseStore';
-export * from './StoreOptions'
+export * from './StoreOptions';

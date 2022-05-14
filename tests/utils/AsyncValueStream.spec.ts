@@ -1,12 +1,12 @@
-import { AsyncValueStream } from "../../src/utils/AsyncValueStream";
-import { StreamClosedError } from "../../src/utils/StreamClosedError";
+import { AsyncValueStream } from '../../src/utils/AsyncValueStream';
+import { StreamClosedError } from '../../src/utils/StreamClosedError';
 
 describe('AsyncValueStream', function () {
-	let stream: AsyncValueStream<number>
+	let stream: AsyncValueStream<number>;
 
 	beforeEach(() => {
 		stream = new AsyncValueStream<number>();
-	})
+	});
 	it('should resolve dispatched value', function (done) {
 		const value = 5;
 

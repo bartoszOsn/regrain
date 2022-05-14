@@ -1,23 +1,28 @@
-import { Store } from "./Store";
-import { Action } from "../action";
-import { Grain } from "../grain";
-import { StoreOptions } from "./StoreOptions";
-import { Effect } from "../effect";
-import { UnsubscribeFunc } from "./BaseStore";
-import { DispatchFunc, GetFunc, SetFunc } from "../typeUtils";
+import { Store } from './Store';
+import { Action } from '../action';
+import { Grain } from '../grain';
+import { StoreOptions } from './StoreOptions';
+import { Effect } from '../effect';
+import { UnsubscribeFunc } from './BaseStore';
+import { DispatchFunc, GetFunc, SetFunc } from '../typeUtils';
 
 export class SubjectStore extends Store {
 	private readonly parentStore: Store;
+
 	private readonly values: Map<Grain<any>, any>;
-	private readonly effects: Map<Action<any>, Set<Effect<any>>>
-	private readonly listeners: Map<Grain<any>, Set<(newValue: any) => void>>
+
+	private readonly effects: Map<Action<any>, Set<Effect<any>>>;
+
+	private readonly listeners: Map<Grain<any>, Set<(newValue: any) => void>>;
 
 	private readonly dispatchFunc: DispatchFunc<unknown> = <TPayload extends unknown>(action: Action<TPayload>, payload: TPayload) => this.dispatch(action, payload);
+
 	private readonly getFunc: GetFunc<unknown> = <T extends unknown>(grain: Grain<T>) => this.get(grain);
+
 	private readonly setFunc: SetFunc<unknown> = <T extends unknown>(grain: Grain<T>, value: T) => this.set(grain, value);
 
 	constructor(
-		options: StoreOptions & { parent: Store }
+		options: StoreOptions & { parent: Store },
 	) {
 		super();
 		this.parentStore = options.parent;
@@ -30,7 +35,7 @@ export class SubjectStore extends Store {
 			}
 
 			this.effects.get(effect.action)!.add(effect);
-		})
+		});
 
 		this.listeners = new Map<Grain<any>, Set<(newValue: any) => void>>(options.grains.map(grain => [grain, new Set<(newValue: any) => void>()]));
 	}
@@ -47,7 +52,7 @@ export class SubjectStore extends Store {
 			effect.callback({
 				dispatch: this.dispatchFunc,
 				get: this.getFunc,
-				set: this.setFunc
+				set: this.setFunc,
 			}, payload);
 		}
 	}

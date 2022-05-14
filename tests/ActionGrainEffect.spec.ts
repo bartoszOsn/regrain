@@ -1,4 +1,4 @@
-import { createAction, createEffect, createGrain } from "../src";
+import { createAction, createEffect, createGrain } from '../src';
 
 describe('Action, Grain and Effect', function () {
 	describe('Action', function () {

@@ -1,6 +1,6 @@
-import { Store } from "../../src/store/Store";
-import { Action, createAction, createEffect, createGrain, Effect, Grain } from "../../src";
-import { SubjectStore } from "../../src/store/SubjectStore";
+import { Store } from '../../src/store/Store';
+import { Action, createAction, createEffect, createGrain, Effect, Grain } from '../../src';
+import { SubjectStore } from '../../src/store/SubjectStore';
 import Mock = jest.Mock;
 
 describe('SubjectStore', function () {
@@ -10,7 +10,7 @@ describe('SubjectStore', function () {
 			action: Action<string>,
 			grain: Grain<string>,
 			effect: Effect<string>,
-			effectCallback: Mock
+			effectCallback: Mock;
 
 		const grainInitialValue = 'initialValue';
 
@@ -26,7 +26,7 @@ describe('SubjectStore', function () {
 				parent: null as unknown as Store,
 				actions: [action],
 				effects: [effect],
-				grains: [grain]
+				grains: [grain],
 			});
 		});
 
@@ -80,7 +80,7 @@ describe('SubjectStore', function () {
 			action: Action<string>,
 			grain: Grain<string>,
 			effect: Effect<string>,
-			effectCallback: Mock
+			effectCallback: Mock;
 
 		const grainInitialValue = 'initialValue';
 
@@ -96,7 +96,7 @@ describe('SubjectStore', function () {
 				parent: null as unknown as Store,
 				actions: [action],
 				effects: [effect],
-				grains: [grain]
+				grains: [grain],
 			});
 		});
 
@@ -110,8 +110,8 @@ describe('SubjectStore', function () {
 					parent: null as unknown as Store,
 					actions: [],
 					grains: [],
-					effects: [effect]
-				})
+					effects: [effect],
+				});
 			}).toThrow();
 		});
 
@@ -162,7 +162,7 @@ describe('SubjectStore', function () {
 				parent: null as unknown as Store,
 				actions: [action, action2],
 				grains: [],
-				effects: [effect, effect2]
+				effects: [effect, effect2],
 			});
 
 			store.dispatch(action, '');
@@ -192,14 +192,14 @@ describe('SubjectStore', function () {
 				set: jest.fn(),
 				get: jest.fn(),
 				dispatch: jest.fn(),
-				listen: jest.fn()
+				listen: jest.fn(),
 			};
 
 			store = new SubjectStore({
 				parent: parentStore,
 				actions: [action],
 				effects: [effect],
-				grains: [grain]
+				grains: [grain],
 			});
 		});
 

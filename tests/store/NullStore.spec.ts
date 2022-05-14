@@ -1,5 +1,5 @@
-import { NullStore } from "../../src/store/NullStore";
-import { createAction, createGrain } from "../../src";
+import { NullStore } from '../../src/store/NullStore';
+import { createAction, createGrain } from '../../src';
 
 describe('NullStore', function () {
 	it('should be singleton', function () {

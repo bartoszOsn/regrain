@@ -1,8 +1,10 @@
-import { StreamClosedError } from "./StreamClosedError";
+import { StreamClosedError } from './StreamClosedError';
 
 export class AsyncValueStream<T> {
 	private queue: Array<T> = [];
+
 	private onDispatch: (() => void) | null = null;
+
 	private isClosed: boolean = false;
 
 
@@ -18,7 +20,7 @@ export class AsyncValueStream<T> {
 		return new Promise(resolve => {
 			this.onDispatch = () => {
 				resolve(this.queue.shift()!);
-			}
+			};
 		});
 	}
 

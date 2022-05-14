@@ -28,6 +28,16 @@
     "@testing-library/react-hooks": "^8.0.0",
     "@types/jest": "^27.4.1",
     "@types/react": "^18.0.6",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
+    "eslint": "^8.15.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-react-hooks": "^4.5.0",
+    "eslintrc-generator": "^1.1.1",
     "jest": "^27.5.1",
     "parcel": "^2.5.0",
     "react": "^18.0.0",
@@ -39,7 +49,8 @@
   "scripts": {
     "build": "parcel build",
     "test": "jest",
-    "prepack": "parcel build"
+    "prepack": "parcel build",
+    "lint": "eslint . --ext .js --ext .ts --ext .tsx"
   },
   "peerDependencies": {
     "react": "^18.0.0"

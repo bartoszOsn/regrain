@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { useStore } from "./useStore";
-import { Action } from "../action";
+import { useStore } from './useStore';
+import { Action } from '../action';
 
 export function useDispatch<TPayload = void>() {
 	const store = useStore();

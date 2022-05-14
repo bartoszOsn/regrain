@@ -1,5 +1,5 @@
-import { Grain } from "../grain";
-import { Action } from "../action";
+import { Grain } from '../grain';
+import { Action } from '../action';
 
 export type UnsubscribeFunc = () => void;
 

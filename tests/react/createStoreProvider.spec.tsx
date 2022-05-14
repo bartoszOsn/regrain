@@ -1,20 +1,20 @@
-import { createStoreProvider } from "../../src";
-import { renderHook } from "@testing-library/react-hooks";
-import { useStore } from "../../src/react/useStore";
-import { SubjectStore } from "../../src/store/SubjectStore";
-import * as React from "react";
-import { NullStore } from "../../src/store/NullStore";
+import { createStoreProvider } from '../../src';
+import { renderHook } from '@testing-library/react-hooks';
+import { useStore } from '../../src/react/useStore';
+import { SubjectStore } from '../../src/store/SubjectStore';
+import * as React from 'react';
+import { NullStore } from '../../src/store/NullStore';
 
 describe('createStoreProvider', function () {
 	it('should provide a SubjectStore', function () {
 		const provider = createStoreProvider({
 			effects: [],
 			grains: [],
-			actions: []
+			actions: [],
 		});
 
 		const { result } = renderHook(() => useStore(), {
-			wrapper: provider
+			wrapper: provider,
 		});
 
 		expect(result.current).toBeInstanceOf(SubjectStore);
@@ -24,22 +24,22 @@ describe('createStoreProvider', function () {
 		const ParentProvider = createStoreProvider({
 			effects: [],
 			grains: [],
-			actions: []
+			actions: [],
 		});
 
 		const Provider = createStoreProvider({
 			effects: [],
 			grains: [],
-			actions: []
+			actions: [],
 		});
 
-		const wrapper = (props: {children: React.ReactNode}) => (
-		<ParentProvider>
-			<Provider>
-				{props.children}
-			</Provider>
-		</ParentProvider>
-	)
+		const wrapper = (props: { children: React.ReactNode }) => (
+			<ParentProvider>
+				<Provider>
+					{props.children}
+				</Provider>
+			</ParentProvider>
+		);
 
 		const { result } = renderHook(() => useStore(), { wrapper });
 
@@ -50,11 +50,11 @@ describe('createStoreProvider', function () {
 		const provider = createStoreProvider({
 			effects: [],
 			grains: [],
-			actions: []
+			actions: [],
 		});
 
 		const { result } = renderHook(() => useStore(), {
-			wrapper: provider
+			wrapper: provider,
 		});
 
 		expect((result.current as SubjectStore).getParent()).toBeInstanceOf(NullStore);

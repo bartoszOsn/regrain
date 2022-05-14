@@ -1,5 +1,5 @@
-import { Action } from "./action";
-import { DispatchFunc, GetFunc, SetFunc } from "./typeUtils";
+import { Action } from './action';
+import { DispatchFunc, GetFunc, SetFunc } from './typeUtils';
 
 export interface EffectProps<TPayload> {
 	dispatch: DispatchFunc<TPayload>;
@@ -14,6 +14,6 @@ export type Effect<TPayload> = Readonly<{
 	callback: EffectCallback<TPayload>
 }>;
 
-export function createEffect<TPayload>(action: Action<TPayload>, callback: EffectCallback<TPayload>): Effect<TPayload>{
+export function createEffect<TPayload>(action: Action<TPayload>, callback: EffectCallback<TPayload>): Effect<TPayload> {
 	return Object.freeze({ action, callback });
 }
