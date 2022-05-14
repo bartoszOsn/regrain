@@ -48,7 +48,7 @@ describe('SubjectStore', function () {
 			store.dispatch(action, payload);
 
 			expect(effectCallback.mock.calls.length).toBe(1);
-			expect(effectCallback.mock.calls[0][3]).toBe(payload);
+			expect(effectCallback.mock.calls[0][1]).toBe(payload);
 		});
 
 		it('should notify immediately of current value on listen()', function () {
@@ -118,8 +118,8 @@ describe('SubjectStore', function () {
 		it('should set value inside effect', function () {
 			const newValue = 'new value';
 
-			effectCallback.mockImplementationOnce((_dispatch, _get, set) => {
-				set(grain, newValue);
+			effectCallback.mockImplementationOnce((props) => {
+				props.set(grain, newValue);
 			});
 
 			store.dispatch(action, '');
@@ -128,8 +128,8 @@ describe('SubjectStore', function () {
 		});
 
 		it('should get value inside effect', function () {
-			effectCallback.mockImplementationOnce((_dispatch, get) => {
-				expect(get(grain)).toBe(grainInitialValue);
+			effectCallback.mockImplementationOnce((props) => {
+				expect(props.get(grain)).toBe(grainInitialValue);
 			});
 
 			store.dispatch(action, '');
@@ -140,7 +140,7 @@ describe('SubjectStore', function () {
 		it('should get a payload inside an effect', function () {
 			const actionPayload = 'new Value';
 
-			effectCallback.mockImplementationOnce((_dispatch, _get, _set, payload) => {
+			effectCallback.mockImplementationOnce((_props, payload) => {
 				expect(payload).toBe(actionPayload);
 			});
 
@@ -154,8 +154,8 @@ describe('SubjectStore', function () {
 			const newEffectFn = jest.fn();
 			const effect2 = createEffect(action2, newEffectFn);
 
-			effectCallback.mockImplementationOnce((dispatch) => {
-				dispatch(action2);
+			effectCallback.mockImplementationOnce((props) => {
+				props.dispatch(action2);
 			});
 
 			const store = new SubjectStore({

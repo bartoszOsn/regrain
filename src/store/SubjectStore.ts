@@ -44,7 +44,11 @@ export class SubjectStore extends Store {
 		const set = this.effects.get(action)!;
 
 		for (const effect of set) {
-			effect.callback(this.dispatchFunc, this.getFunc, this.setFunc, payload);
+			effect.callback({
+				dispatch: this.dispatchFunc,
+				get: this.getFunc,
+				set: this.setFunc
+			}, payload);
 		}
 	}
 
