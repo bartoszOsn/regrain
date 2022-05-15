@@ -48,4 +48,5 @@ describe('Action, Grain and Effect', function () {
 			expect(() => (effect as any).callback = () => null).toThrow(TypeError);
 		});
 	});
+
 });
