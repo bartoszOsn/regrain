@@ -14,7 +14,7 @@ export class SubjectStore extends Store {
 
 	private readonly listeners: Map<Grain<any>, Set<(newValue: any) => void>>;
 
-	private readonly dispatchFunc: EffectProps["dispatch"] = <TPayload extends unknown>(action: Action<TPayload>, payload: TPayload) => this.dispatch(action, payload);
+	private readonly dispatchFunc: EffectProps["dispatch"] = <TPayload extends unknown>(action: ReturnType<Action<TPayload>>) => this.dispatch(action);
 
 	private readonly getFunc: EffectProps["get"] = <T extends unknown>(grain: Grain<T>) => this.get(grain);
 
@@ -39,20 +39,20 @@ export class SubjectStore extends Store {
 		this.listeners = new Map<Grain<any>, Set<(newValue: any) => void>>(options.grains.map(grain => [grain, new Set<(newValue: any) => void>()]));
 	}
 
-	override dispatch<TPayload>(action: Action<TPayload>, payload: TPayload) {
-		if (!this.effects.has(action)) {
-			this.parentStore.dispatch(action, payload);
+	override dispatch<TPayload>(action: ReturnType<Action<TPayload>>) {
+		if (!this.effects.has(action.type)) {
+			this.parentStore.dispatch(action);
 			return;
 		}
 
-		const set = this.effects.get(action)!;
+		const set = this.effects.get(action.type)!;
 
 		for (const effect of set) {
 			effect.callback({
 				dispatch: this.dispatchFunc,
 				get: this.getFunc,
 				set: this.setFunc,
-			}, payload);
+			}, action.payload);
 		}
 	}
 

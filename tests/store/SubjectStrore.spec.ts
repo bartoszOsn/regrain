@@ -2,6 +2,7 @@ import { Store } from '../../src/store/Store';
 import { Action, createAction, createEffect, createGrain, Effect, Grain } from '../../src';
 import { SubjectStore } from '../../src/store/SubjectStore';
 import Mock = jest.Mock;
+import { act } from "@testing-library/react-hooks";
 
 describe('SubjectStore', function () {
 	describe('basic', function () {
@@ -45,7 +46,7 @@ describe('SubjectStore', function () {
 		it('should run an effect on action', function () {
 			const payload = 'asd';
 
-			store.dispatch(action, payload);
+			store.dispatch(action(payload));
 
 			expect(effectCallback.mock.calls.length).toBe(1);
 			expect(effectCallback.mock.calls[0][1]).toBe(payload);
@@ -122,7 +123,7 @@ describe('SubjectStore', function () {
 				props.set(grain, newValue);
 			});
 
-			store.dispatch(action, '');
+			store.dispatch(action(''));
 
 			expect(store.get(grain)).toBe(newValue);
 		});
@@ -132,7 +133,7 @@ describe('SubjectStore', function () {
 				expect(props.get(grain)).toBe(grainInitialValue);
 			});
 
-			store.dispatch(action, '');
+			store.dispatch(action(''));
 
 			expect(effectCallback.mock.calls.length).toBe(1);
 		});
@@ -144,7 +145,7 @@ describe('SubjectStore', function () {
 				expect(payload).toBe(actionPayload);
 			});
 
-			store.dispatch(action, actionPayload);
+			store.dispatch(action(actionPayload));
 
 			expect(effectCallback.mock.calls.length).toBe(1);
 		});
@@ -155,7 +156,7 @@ describe('SubjectStore', function () {
 			const effect2 = createEffect(action2, newEffectFn);
 
 			effectCallback.mockImplementationOnce((props) => {
-				props.dispatch(action2);
+				props.dispatch(action2());
 			});
 
 			const store = new SubjectStore({
@@ -164,8 +165,8 @@ describe('SubjectStore', function () {
 				grains: [],
 				effects: [effect, effect2],
 			});
-
-			store.dispatch(action, '');
+			console.log(action('').type, action('').type === action)
+			store.dispatch(action(''));
 
 			expect(newEffectFn.mock.calls.length).toBe(1);
 		});
@@ -230,7 +231,7 @@ describe('SubjectStore', function () {
 		it('should fallback to parent on dispatch if no action in this store', function () {
 			const nonPresentAction = createAction<void>('non present action');
 
-			store.dispatch(nonPresentAction, null);
+			store.dispatch(nonPresentAction());
 
 			expect(parentStore.dispatch.mock.calls.length).toBe(1);
 		});

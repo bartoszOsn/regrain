@@ -2,7 +2,7 @@ import { Action } from './action';
 import { Grain } from "./grain";
 
 export interface EffectProps {
-	dispatch: <TPayload>(action: Action<TPayload>, payload: TPayload) => void;
+	dispatch: <TPayload>(action: ReturnType<Action<TPayload>>) => void;
 	get: <TValue>(grain: Grain<TValue>) => TValue;
 	set: <TValue>(grain: Grain<TValue>, value: TValue) => void;
 }

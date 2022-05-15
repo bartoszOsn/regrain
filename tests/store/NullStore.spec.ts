@@ -17,7 +17,7 @@ describe('NullStore', function () {
 
 		expect(() => store.get(grain)).toThrow();
 		expect(() => store.set(grain, null)).toThrow();
-		expect(() => store.dispatch(action, null)).toThrow();
+		expect(() => store.dispatch(action())).toThrow();
 		expect(() => store.listen(grain, () => void 0)).toThrow();
 	});
 });

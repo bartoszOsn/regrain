@@ -14,7 +14,7 @@ export class NullStore extends Store {
 		return this.instance;
 	}
 
-	override dispatch<TPayload>(action: Action<TPayload>, _payload: TPayload): void {
+	override dispatch<TPayload>(action: ReturnType<Action<TPayload>>): void {
 		throw new Error(`Didn't found a store with given action [${action.name}] in hierarchy`);
 	}
 

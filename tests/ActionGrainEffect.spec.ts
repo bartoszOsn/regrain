@@ -1,4 +1,4 @@
-import { createAction, createEffect, createGrain } from '../src';
+import { createAction, createEffect, createGrain, EffectProps } from '../src';
 
 describe('Action, Grain and Effect', function () {
 	describe('Action', function () {
@@ -7,11 +7,6 @@ describe('Action, Grain and Effect', function () {
 			const action = createAction(name);
 
 			expect(action.name).toMatch(name);
-		});
-
-		it('should be immutable', function () {
-			const action = createAction('name');
-			expect(() => (action as any).name = 'otherName').toThrow(TypeError);
 		});
 	});
 
@@ -40,8 +35,7 @@ describe('Action, Grain and Effect', function () {
 			const callback = () => fired = true;
 
 			const effect = createEffect(action, callback);
-			// @ts-ignore
-			effect.callback(null, null, null, null);
+			effect.callback(null as unknown as EffectProps);
 
 			expect(effect.action).toBe(action);
 			expect(fired).toBeTruthy();
