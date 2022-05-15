@@ -1,5 +1,5 @@
 import { Action } from './action';
-import { Grain } from "./grain";
+import { Grain } from './grain';
 
 export interface EffectProps {
 	dispatch: <TPayload>(action: ReturnType<Action<TPayload>>) => void;

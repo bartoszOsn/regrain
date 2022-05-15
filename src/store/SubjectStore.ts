@@ -14,11 +14,11 @@ export class SubjectStore extends Store {
 
 	private readonly listeners: Map<Grain<any>, Set<(newValue: any) => void>>;
 
-	private readonly dispatchFunc: EffectProps["dispatch"] = <TPayload extends unknown>(action: ReturnType<Action<TPayload>>) => this.dispatch(action);
+	private readonly dispatchFunc: EffectProps['dispatch'] = <TPayload extends unknown>(action: ReturnType<Action<TPayload>>) => this.dispatch(action);
 
-	private readonly getFunc: EffectProps["get"] = <T extends unknown>(grain: Grain<T>) => this.get(grain);
+	private readonly getFunc: EffectProps['get'] = <T extends unknown>(grain: Grain<T>) => this.get(grain);
 
-	private readonly setFunc: EffectProps["set"] = <T extends unknown>(grain: Grain<T>, value: T) => this.set(grain, value);
+	private readonly setFunc: EffectProps['set'] = <T extends unknown>(grain: Grain<T>, value: T) => this.set(grain, value);
 
 	constructor(
 		options: StoreOptions & { parent: Store },

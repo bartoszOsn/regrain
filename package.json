@@ -51,6 +51,7 @@
     "test": "jest",
     "prepack": "parcel build",
     "lint": "eslint . --ext .js --ext .ts --ext .tsx",
+    "lint:fix": "yarn lint --fix",
     "demo:build": "yarn --cwd ./demo build-prod",
     "check": "yarn build && yarn test && yarn demo:build && yarn lint"
   },

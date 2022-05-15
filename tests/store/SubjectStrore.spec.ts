@@ -2,7 +2,6 @@ import { Store } from '../../src/store/Store';
 import { Action, createAction, createEffect, createGrain, Effect, Grain } from '../../src';
 import { SubjectStore } from '../../src/store/SubjectStore';
 import Mock = jest.Mock;
-import { act } from "@testing-library/react-hooks";
 
 describe('SubjectStore', function () {
 	describe('basic', function () {
@@ -102,8 +101,8 @@ describe('SubjectStore', function () {
 		});
 
 		it('should throw when effect listen\'s to action not present in the store', function () {
-			const action = createAction('action');
-			const effect = createEffect(action, () => void 0);
+			const action2 = createAction('action');
+			const effect2 = createEffect(action2, () => void 0);
 
 
 			expect(() => {
@@ -111,7 +110,7 @@ describe('SubjectStore', function () {
 					parent: null as unknown as Store,
 					actions: [],
 					grains: [],
-					effects: [effect],
+					effects: [effect2],
 				});
 			}).toThrow();
 		});
@@ -159,14 +158,14 @@ describe('SubjectStore', function () {
 				props.dispatch(action2());
 			});
 
-			const store = new SubjectStore({
+			const store2 = new SubjectStore({
 				parent: null as unknown as Store,
 				actions: [action, action2],
 				grains: [],
 				effects: [effect, effect2],
 			});
-			console.log(action('').type, action('').type === action)
-			store.dispatch(action(''));
+			console.log(action('').type, action('').type === action);
+			store2.dispatch(action(''));
 
 			expect(newEffectFn.mock.calls.length).toBe(1);
 		});

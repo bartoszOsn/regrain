@@ -6,7 +6,7 @@ export type Action<TPayload> = ((payload: TPayload) => {
 	type: Action<TPayload>,
 	payload: TPayload,
 	name: string
-}) & { name: string }
+}) & { name: string };
 
 /**
  * creates an action.
@@ -19,9 +19,9 @@ export function createAction<TPayload = void>(name: string): Action<TPayload> {
 			return {
 				type: tmp[name],
 				payload: payload,
-				name: name
-			}
-		}
+				name: name,
+			};
+		},
 	};
 	return tmp[name] as Action<TPayload>;
 }

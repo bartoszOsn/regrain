@@ -63,7 +63,7 @@ describe('AsyncValueStream', function () {
 			.catch(error => {
 				expect(error).toBeInstanceOf(StreamClosedError);
 				done();
-			})
+			});
 	});
 
 	it('should select only selected values', function (done) {

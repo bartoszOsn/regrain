@@ -11,7 +11,7 @@ type AsyncValueStreamListener<T> = {
 
 function getAsyncValueStreamListener<T>(selector: AsyncValueStreamSelector<T>): AsyncValueStreamListener<T> {
 	const result: Partial<AsyncValueStreamListener<T>> = {
-		selector
+		selector,
 	};
 	
 	result.promise = new Promise<T>(((resolve, reject) => {
@@ -24,6 +24,7 @@ function getAsyncValueStreamListener<T>(selector: AsyncValueStreamSelector<T>): 
 
 export class AsyncValueStream<T> {
 	private queue: Array<T> = [];
+
 	private promiseQueue: Array<AsyncValueStreamListener<T>> = [];
 
 	private isClosed: boolean = false;
@@ -54,9 +55,7 @@ export class AsyncValueStream<T> {
 	}
 
 	private resolvePromises(): void {
-		const count = Math.min(this.queue.length, this.promiseQueue.length);
-
-		while(this.promiseQueue.length > 0 && this.queue.length > 0) {
+		while (this.promiseQueue.length > 0 && this.queue.length > 0) {
 			const promise = this.promiseQueue[0];
 			let value: T;
 			while (this.queue.length > 0) {
@@ -70,7 +69,7 @@ export class AsyncValueStream<T> {
 		}
 
 		if (this.isClosed && this.queue.length === 0) {
-			while(this.promiseQueue.length > 0) {
+			while (this.promiseQueue.length > 0) {
 				const promise = this.promiseQueue.shift()!;
 				promise.reject(new StreamClosedError());
 			}
