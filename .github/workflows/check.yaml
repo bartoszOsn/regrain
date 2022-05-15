@@ -13,4 +13,5 @@ jobs:
         with:
           node-version: '16'
       - run: yarn install
+      - run: yarn --cwd demo install
       - run: yarn run check
