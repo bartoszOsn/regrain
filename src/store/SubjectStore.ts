@@ -2,9 +2,8 @@ import { Store } from './Store';
 import { Action } from '../action';
 import { Grain } from '../grain';
 import { StoreOptions } from './StoreOptions';
-import { Effect } from '../effect';
+import { Effect, EffectProps } from '../effect';
 import { UnsubscribeFunc } from './BaseStore';
-import { DispatchFunc, GetFunc, SetFunc } from '../typeUtils';
 
 export class SubjectStore extends Store {
 	private readonly parentStore: Store;
@@ -15,11 +14,11 @@ export class SubjectStore extends Store {
 
 	private readonly listeners: Map<Grain<any>, Set<(newValue: any) => void>>;
 
-	private readonly dispatchFunc: DispatchFunc<unknown> = <TPayload extends unknown>(action: Action<TPayload>, payload: TPayload) => this.dispatch(action, payload);
+	private readonly dispatchFunc: EffectProps["dispatch"] = <TPayload extends unknown>(action: Action<TPayload>, payload: TPayload) => this.dispatch(action, payload);
 
-	private readonly getFunc: GetFunc<unknown> = <T extends unknown>(grain: Grain<T>) => this.get(grain);
+	private readonly getFunc: EffectProps["get"] = <T extends unknown>(grain: Grain<T>) => this.get(grain);
 
-	private readonly setFunc: SetFunc<unknown> = <T extends unknown>(grain: Grain<T>, value: T) => this.set(grain, value);
+	private readonly setFunc: EffectProps["set"] = <T extends unknown>(grain: Grain<T>, value: T) => this.set(grain, value);
 
 	constructor(
 		options: StoreOptions & { parent: Store },
