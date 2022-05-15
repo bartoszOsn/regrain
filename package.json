@@ -50,7 +50,9 @@
     "build": "parcel build",
     "test": "jest",
     "prepack": "parcel build",
-    "lint": "eslint . --ext .js --ext .ts --ext .tsx"
+    "lint": "eslint . --ext .js --ext .ts --ext .tsx",
+    "demo:build": "yarn --cwd ./demo build-prod",
+    "check": "yarn build && yarn test && yarn demo:build && yarn lint"
   },
   "peerDependencies": {
     "react": "^18.0.0"
