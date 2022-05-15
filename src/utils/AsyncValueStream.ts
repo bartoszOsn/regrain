@@ -1,38 +1,77 @@
 import { StreamClosedError } from './StreamClosedError';
 
+type LazyPromise<T> = {
+	promise: Promise<T>,
+	resolve: (value: T | PromiseLike<T>) => void,
+	reject: (reason?: any) => void
+};
+
+function getLazyPromise<T>(): LazyPromise<T> {
+	const result: Partial<LazyPromise<T>> = {};
+	
+	result.promise = new Promise<T>(((resolve, reject) => {
+		result.resolve = resolve;
+		result.reject = reject;
+	}));
+	
+	return result as LazyPromise<T>;
+}
+
 export class AsyncValueStream<T> {
 	private queue: Array<T> = [];
-
-	private onDispatch: (() => void) | null = null;
+	private promiseQueue: Array<LazyPromise<T>> = [];
 
 	private isClosed: boolean = false;
 
-
-	select(): Promise<T> {
-		if (this.queue.length > 0) {
-			return Promise.resolve(this.queue.shift()!);
+	async select(selector?: (value: T) => boolean): Promise<T> {
+		if (!selector) {
+			selector = () => true;
 		}
 
-		if (this.isClosed) {
-			throw new StreamClosedError();
+		while(true) {
+			const value = await this.selectAll();
+			if (selector(value)) {
+				return value;
+			}
 		}
+	}
 
-		return new Promise(resolve => {
-			this.onDispatch = () => {
-				resolve(this.queue.shift()!);
-			};
-		});
+	private selectAll(): Promise<T> {
+		const lazyPromise = getLazyPromise<T>();
+		this.promiseQueue.push(lazyPromise);
+
+		this.resolvePromises();
+
+		return lazyPromise.promise;
 	}
 
 	dispatch(value: T): void {
-		this.queue.push(value);
-		if (this.onDispatch) {
-			this.onDispatch();
+		if (this.isClosed) {
+			return;
 		}
-		this.onDispatch = null;
+		this.queue.push(value);
+		this.resolvePromises();
 	}
 
 	close(): void {
 		this.isClosed = true;
+	}
+
+	private resolvePromises(): void {
+		const count = Math.min(this.queue.length, this.promiseQueue.length);
+
+		for (let i = 0; i < count; i++) {
+			const promise = this.promiseQueue.shift()!;
+			const value = this.queue.shift()!;
+
+			promise.resolve(value);
+		}
+
+		if (this.isClosed) {
+			while(this.promiseQueue.length) {
+				const promise = this.promiseQueue.shift()!;
+				promise.reject(new StreamClosedError());
+			}
+		}
 	}
 }
