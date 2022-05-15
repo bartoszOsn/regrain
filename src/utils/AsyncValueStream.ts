@@ -1,25 +1,30 @@
 import { StreamClosedError } from './StreamClosedError';
 
-type LazyPromise<T> = {
+type AsyncValueStreamSelector<T> = (value: T) => boolean;
+
+type AsyncValueStreamListener<T> = {
 	promise: Promise<T>,
 	resolve: (value: T | PromiseLike<T>) => void,
-	reject: (reason?: any) => void
+	reject: (reason?: any) => void,
+	selector: AsyncValueStreamSelector<T>
 };
 
-function getLazyPromise<T>(): LazyPromise<T> {
-	const result: Partial<LazyPromise<T>> = {};
+function getAsyncValueStreamListener<T>(selector: AsyncValueStreamSelector<T>): AsyncValueStreamListener<T> {
+	const result: Partial<AsyncValueStreamListener<T>> = {
+		selector
+	};
 	
 	result.promise = new Promise<T>(((resolve, reject) => {
 		result.resolve = resolve;
 		result.reject = reject;
 	}));
 	
-	return result as LazyPromise<T>;
+	return result as AsyncValueStreamListener<T>;
 }
 
 export class AsyncValueStream<T> {
 	private queue: Array<T> = [];
-	private promiseQueue: Array<LazyPromise<T>> = [];
+	private promiseQueue: Array<AsyncValueStreamListener<T>> = [];
 
 	private isClosed: boolean = false;
 
@@ -28,21 +33,12 @@ export class AsyncValueStream<T> {
 			selector = () => true;
 		}
 
-		while(true) {
-			const value = await this.selectAll();
-			if (selector(value)) {
-				return value;
-			}
-		}
-	}
-
-	private selectAll(): Promise<T> {
-		const lazyPromise = getLazyPromise<T>();
-		this.promiseQueue.push(lazyPromise);
+		const listener = getAsyncValueStreamListener<T>(selector);
+		this.promiseQueue.push(listener);
 
 		this.resolvePromises();
 
-		return lazyPromise.promise;
+		return listener.promise;
 	}
 
 	dispatch(value: T): void {
@@ -60,15 +56,21 @@ export class AsyncValueStream<T> {
 	private resolvePromises(): void {
 		const count = Math.min(this.queue.length, this.promiseQueue.length);
 
-		for (let i = 0; i < count; i++) {
-			const promise = this.promiseQueue.shift()!;
-			const value = this.queue.shift()!;
-
-			promise.resolve(value);
+		while(this.promiseQueue.length > 0 && this.queue.length > 0) {
+			const promise = this.promiseQueue[0];
+			let value: T;
+			while (this.queue.length > 0) {
+				value = this.queue.shift()!;
+				if (promise.selector(value)) {
+					this.promiseQueue.shift();
+					promise.resolve(value);
+					break;
+				}
+			}
 		}
 
-		if (this.isClosed) {
-			while(this.promiseQueue.length) {
+		if (this.isClosed && this.queue.length === 0) {
+			while(this.promiseQueue.length > 0) {
 				const promise = this.promiseQueue.shift()!;
 				promise.reject(new StreamClosedError());
 			}

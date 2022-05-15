@@ -47,28 +47,39 @@ describe('AsyncValueStream', function () {
 		Promise.all(promises).then(() => done());
 	});
 
-	it('should be closeable', async function () {
+	it('should be closeable', function (done) {
+		expect.assertions(2);
+
 		const value = 5;
 
 		stream.dispatch(value);
 		stream.close();
 
-		const v = await stream.select();
-		expect(v).toBe(value);
-		await expect(stream.select()).rejects.toBeInstanceOf(StreamClosedError);
+		stream.select()
+			.then(v => {
+				expect(v).toBe(value);
+				return stream.select();
+			})
+			.catch(error => {
+				expect(error).toBeInstanceOf(StreamClosedError);
+				done();
+			})
 	});
 
 	it('should select only selected values', function (done) {
-		const values = [1, 2, 3, 4, 5];
+		const values = [1, 2, 3, 4, 5, 6, 7, 8];
 		const selector = (value: number) => value % 2 === 0;
 		const selectedValues = values.filter(selector);
-		const promises = selectedValues.map(() => stream.select(selector));
+
 
 		values.forEach((v) => stream.dispatch(v));
 
-		promises.forEach((promise, i) => promise.then(value => expect(value).toBe(selectedValues[i])));
+		const promises = selectedValues.map(() => stream.select(selector));
 
 		Promise.all(promises)
-			.then(() => done());
+			.then((array) => {
+				expect(array).toEqual(selectedValues);
+				done();
+			});
 	});
 });
