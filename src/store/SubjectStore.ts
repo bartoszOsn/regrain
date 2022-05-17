@@ -27,7 +27,7 @@ export class SubjectStore extends Store {
 			set: (grain, value) => this.set(grain, value),
 			dispatch: (action) => this.dispatch(action),
 		},
-		new Set<Effect<unknown>>(options.effects),
+		new Set<Effect>(options.effects),
 		new Set<Action<unknown>>(options.actions),
 		);
 

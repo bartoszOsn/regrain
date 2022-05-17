@@ -1,20 +1,24 @@
-import { Effect, EffectProps } from '../effect';
+import { Effect, EffectProps, EffectSelector } from '../effect';
 import { Action } from '../action';
+import { AsyncValueStream } from '../utils/AsyncValueStream';
 
 export class EffectManager {
 
+	private readonly streams: AsyncValueStream<ReturnType<Action<any>>>[] = [];
+
 	constructor(
 		private readonly effectProps: EffectProps,
-		private readonly effects: Set<Effect<unknown>>,
+		private readonly effects: Set<Effect>,
 		private readonly actions: Set<Action<unknown>>,
 	) {
 	}
 
 	initialize() {
 		this.effects.forEach((effect) => {
-			if (!this.actions.has(effect.action as Action<unknown>)) {
-				throw new Error(`effect listen's to action that isn't present in this store: [${effect.action.name}]`);
-			}
+			const stream = new AsyncValueStream<ReturnType<Action<any>>>();
+			const selectFunc = <TPayload>(selector?: EffectSelector<ReturnType<Action<TPayload>>>) => (stream.select(selector) as Promise<ReturnType<Action<TPayload>>>);
+			effect(selectFunc, this.effectProps);
+			this.streams.push(stream);
 		});
 	}
 
@@ -27,12 +31,10 @@ export class EffectManager {
 			throw new Error(`Cannot handle action ${action.name}`);
 		}
 
-		[...this.effects]
-			.filter(effect => effect.action === action.type)
-			.forEach(effect => effect.callback(this.effectProps, action.payload));
+		this.streams.forEach(stream => stream.dispatch(action));
 	}
 
 	finalize(): void {
-
+		this.streams.forEach(stream => stream.close());
 	}
 }

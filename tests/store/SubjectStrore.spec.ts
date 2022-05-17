@@ -3,13 +3,19 @@ import { Action, createAction, createSimpleEffect, createGrain, Effect, Grain } 
 import { SubjectStore } from '../../src/store/SubjectStore';
 import Mock = jest.Mock;
 
+function waitTick() {
+	return new Promise(resolve => {
+		setTimeout(resolve);
+	});
+}
+
 describe('SubjectStore', function () {
 	describe('basic', function () {
 
 		let store: Store,
 			action: Action<string>,
 			grain: Grain<string>,
-			effect: Effect<string>,
+			effect: Effect,
 			effectCallback: Mock;
 
 		const grainInitialValue = 'initialValue';
@@ -42,11 +48,12 @@ describe('SubjectStore', function () {
 			expect(store.get(grain)).toBe(newValue);
 		});
 
-		it('should run an effect on action', function () {
+		it('should run an effect on action', async function () {
 			const payload = 'asd';
 
 			store.dispatch(action(payload));
 
+			await waitTick();
 			expect(effectCallback.mock.calls.length).toBe(1);
 			expect(effectCallback.mock.calls[0][1]).toBe(payload);
 		});
@@ -79,7 +86,7 @@ describe('SubjectStore', function () {
 		let store: Store,
 			action: Action<string>,
 			grain: Grain<string>,
-			effect: Effect<string>,
+			effect: Effect,
 			effectCallback: Mock;
 
 		const grainInitialValue = 'initialValue';
@@ -100,22 +107,7 @@ describe('SubjectStore', function () {
 			});
 		});
 
-		it('should throw when effect listen\'s to action not present in the store', function () {
-			const action2 = createAction('action');
-			const effect2 = createSimpleEffect(action2, () => void 0);
-
-
-			expect(() => {
-				new SubjectStore({
-					parent: null as unknown as Store,
-					actions: [],
-					grains: [],
-					effects: [effect2],
-				});
-			}).toThrow();
-		});
-
-		it('should set value inside effect', function () {
+		it('should set value inside effect', async function () {
 			const newValue = 'new value';
 
 			effectCallback.mockImplementationOnce((props) => {
@@ -124,20 +116,24 @@ describe('SubjectStore', function () {
 
 			store.dispatch(action(''));
 
+			await waitTick();
+
 			expect(store.get(grain)).toBe(newValue);
 		});
 
-		it('should get value inside effect', function () {
+		it('should get value inside effect', async function () {
 			effectCallback.mockImplementationOnce((props) => {
 				expect(props.get(grain)).toBe(grainInitialValue);
 			});
 
 			store.dispatch(action(''));
 
+			await waitTick();
+
 			expect(effectCallback.mock.calls.length).toBe(1);
 		});
 
-		it('should get a payload inside an effect', function () {
+		it('should get a payload inside an effect', async function () {
 			const actionPayload = 'new Value';
 
 			effectCallback.mockImplementationOnce((_props, payload) => {
@@ -146,10 +142,12 @@ describe('SubjectStore', function () {
 
 			store.dispatch(action(actionPayload));
 
+			await waitTick();
+
 			expect(effectCallback.mock.calls.length).toBe(1);
 		});
 
-		it('should dispatch action from effect', function () {
+		it('should dispatch action from effect', async function () {
 			const action2 = createAction('second action');
 			const newEffectFn = jest.fn();
 			const effect2 = createSimpleEffect(action2, newEffectFn);
@@ -164,8 +162,9 @@ describe('SubjectStore', function () {
 				grains: [],
 				effects: [effect, effect2],
 			});
-			console.log(action('').type, action('').type === action);
 			store2.dispatch(action(''));
+
+			await waitTick();
 
 			expect(newEffectFn.mock.calls.length).toBe(1);
 		});
@@ -175,7 +174,7 @@ describe('SubjectStore', function () {
 		let store: Store,
 			action: Action<string>,
 			grain: Grain<string>,
-			effect: Effect<string>,
+			effect: Effect,
 			effectCallback: Mock,
 			parentStore: { [func in keyof Store]: Mock };
 

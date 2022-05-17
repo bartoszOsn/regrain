@@ -1,4 +1,4 @@
-import { createAction, createSimpleEffect, createGrain, EffectProps } from '../src';
+import { createAction, createGrain, createSimpleEffect } from '../src';
 
 describe('Action, Grain and Effect', function () {
 	describe('Action', function () {
@@ -29,23 +29,11 @@ describe('Action, Grain and Effect', function () {
 	});
 
 	describe('Effect', function () {
-		it('should be properly created by createEffect', function () {
+		it('should be a function', function () {
 			const action = createAction('name');
-			let fired = false;
-			const callback = () => fired = true;
+			const effect = createSimpleEffect(action, () => void 0);
 
-			const effect = createSimpleEffect(action, callback);
-			effect.callback(null as unknown as EffectProps);
-
-			expect(effect.action).toBe(action);
-			expect(fired).toBeTruthy();
-		});
-
-		it('should be immutable', function () {
-			const effect = createSimpleEffect(createAction('name'), () => void 0);
-
-			expect(() => (effect as any).action = createAction('otherName')).toThrow(TypeError);
-			expect(() => (effect as any).callback = () => null).toThrow(TypeError);
+			expect(effect).toBeInstanceOf(Function);
 		});
 	});
 
