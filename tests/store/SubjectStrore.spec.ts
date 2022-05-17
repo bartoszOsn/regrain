@@ -1,5 +1,5 @@
 import { Store } from '../../src/store/Store';
-import { Action, createAction, createEffect, createGrain, Effect, Grain } from '../../src';
+import { Action, createAction, createSimpleEffect, createGrain, Effect, Grain } from '../../src';
 import { SubjectStore } from '../../src/store/SubjectStore';
 import Mock = jest.Mock;
 
@@ -19,7 +19,7 @@ describe('SubjectStore', function () {
 
 			action = createAction<string>('action');
 			grain = createGrain<string>('grain', grainInitialValue);
-			effect = createEffect(action, effectCallback);
+			effect = createSimpleEffect(action, effectCallback);
 
 
 			store = new SubjectStore({
@@ -89,7 +89,7 @@ describe('SubjectStore', function () {
 
 			action = createAction<string>('action');
 			grain = createGrain<string>('grain', grainInitialValue);
-			effect = createEffect(action, effectCallback);
+			effect = createSimpleEffect(action, effectCallback);
 
 
 			store = new SubjectStore({
@@ -102,7 +102,7 @@ describe('SubjectStore', function () {
 
 		it('should throw when effect listen\'s to action not present in the store', function () {
 			const action2 = createAction('action');
-			const effect2 = createEffect(action2, () => void 0);
+			const effect2 = createSimpleEffect(action2, () => void 0);
 
 
 			expect(() => {
@@ -152,7 +152,7 @@ describe('SubjectStore', function () {
 		it('should dispatch action from effect', function () {
 			const action2 = createAction('second action');
 			const newEffectFn = jest.fn();
-			const effect2 = createEffect(action2, newEffectFn);
+			const effect2 = createSimpleEffect(action2, newEffectFn);
 
 			effectCallback.mockImplementationOnce((props) => {
 				props.dispatch(action2());
@@ -186,7 +186,7 @@ describe('SubjectStore', function () {
 
 			action = createAction<string>('action');
 			grain = createGrain<string>('grain', grainInitialValue);
-			effect = createEffect(action, effectCallback);
+			effect = createSimpleEffect(action, effectCallback);
 
 			parentStore = {
 				set: jest.fn(),

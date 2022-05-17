@@ -14,6 +14,6 @@ export type Effect<TPayload> = Readonly<{
 	callback: EffectCallback<TPayload>
 }>;
 
-export function createEffect<TPayload>(action: Action<TPayload>, callback: EffectCallback<TPayload>): Effect<TPayload> {
+export function createSimpleEffect<TPayload>(action: Action<TPayload>, callback: EffectCallback<TPayload>): Effect<TPayload> {
 	return Object.freeze({ action, callback });
 }
