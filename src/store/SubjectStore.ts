@@ -2,23 +2,18 @@ import { Store } from './Store';
 import { Action } from '../action';
 import { Grain } from '../grain';
 import { StoreOptions } from './StoreOptions';
-import { Effect, EffectProps } from '../effect';
+import { Effect } from '../effect';
 import { UnsubscribeFunc } from './BaseStore';
+import { EffectManager } from './EffectManager';
 
 export class SubjectStore extends Store {
 	private readonly parentStore: Store;
 
+	private readonly effectManager: EffectManager;
+
 	private readonly values: Map<Grain<any>, any>;
 
-	private readonly effects: Map<Action<any>, Set<Effect<any>>>;
-
 	private readonly listeners: Map<Grain<any>, Set<(newValue: any) => void>>;
-
-	private readonly dispatchFunc: EffectProps['dispatch'] = <TPayload extends unknown>(action: ReturnType<Action<TPayload>>) => this.dispatch(action);
-
-	private readonly getFunc: EffectProps['get'] = <T extends unknown>(grain: Grain<T>) => this.get(grain);
-
-	private readonly setFunc: EffectProps['set'] = <T extends unknown>(grain: Grain<T>, value: T) => this.set(grain, value);
 
 	constructor(
 		options: StoreOptions & { parent: Store },
@@ -27,33 +22,31 @@ export class SubjectStore extends Store {
 		this.parentStore = options.parent;
 		this.values = new Map<Grain<any>, any>(options.grains.map(grain => [grain, grain.initialValue]));
 
-		this.effects = new Map<Action<any>, Set<Effect<any>>>(options.actions.map(action => [action, new Set<Effect<any>>()]));
-		options.effects.forEach((effect) => {
-			if (!this.effects.has(effect.action)) {
-				throw new Error(`effect listen's to action that isn't present in this store: [${effect.action.name}]`);
-			}
-
-			this.effects.get(effect.action)!.add(effect);
-		});
+		this.effectManager = new EffectManager({
+			get: (grain) => this.get(grain),
+			set: (grain, value) => this.set(grain, value),
+			dispatch: (action) => this.dispatch(action),
+		},
+		new Set<Effect>(options.effects),
+		new Set<Action<unknown>>(options.actions),
+		);
 
 		this.listeners = new Map<Grain<any>, Set<(newValue: any) => void>>(options.grains.map(grain => [grain, new Set<(newValue: any) => void>()]));
+
+		this.effectManager.initialize();
+	}
+
+	finalize(): void {
+		this.effectManager.finalize();
 	}
 
 	override dispatch<TPayload>(action: ReturnType<Action<TPayload>>) {
-		if (!this.effects.has(action.type)) {
+		if (!this.effectManager.canHandleAction(action.type)) {
 			this.parentStore.dispatch(action);
 			return;
 		}
 
-		const set = this.effects.get(action.type)!;
-
-		for (const effect of set) {
-			effect.callback({
-				dispatch: this.dispatchFunc,
-				get: this.getFunc,
-				set: this.setFunc,
-			}, action.payload);
-		}
+		this.effectManager.dispatch(action);
 	}
 
 	override listen<T>(changedAtom: Grain<T>, callback: (newValue: T) => void): UnsubscribeFunc {

@@ -1,5 +1,5 @@
 import { StoreOptions } from '../store';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { storeContext } from './storeContext';
 import { useStore } from './useStore';
 import { SubjectStore } from '../store/SubjectStore';
@@ -12,6 +12,12 @@ export function createStoreProvider(options: StoreOptions): React.FC<{ children:
 			...options,
 			parent: parentStore,
 		}), [parentStore]);
+
+		useEffect(() => {
+			return () => {
+				store.finalize();
+			};
+		}, []);
 
 		return (
 			<storeContext.Provider value={store}>
