@@ -55,6 +55,7 @@
     "lint": "eslint . --ext .ts --ext .tsx",
     "lint:fix": "yarn lint --fix",
     "demo:build": "cd demo && yarn run build-prod && cd ..",
+    "demo:start": "cd demo && yarn start && cd ..",
     "check": "yarn build && yarn test && yarn demo:build && yarn lint"
   },
   "peerDependencies": {
