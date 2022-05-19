@@ -57,7 +57,7 @@
     "demo:build": "cd demo && yarn run build-prod && cd ..",
     "demo:start": "cd demo && yarn start && cd ..",
     "demo: link": "yarn link && cd demo && yarn link regrain",
-    "check": "yarn build && yarn test && yarn demo:build && yarn lint"
+    "check": "yarn build && yarn test && yarn demo:link && yarn demo:build && yarn lint"
   },
   "peerDependencies": {
     "react": "^18.0.0"
