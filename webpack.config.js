@@ -1,5 +1,4 @@
 const path = require('path');
-var DeclarationBundlerPlugin = require('declaration-bundler-webpack-plugin');
 
 const config = {
 	entry: './src/index.ts',
@@ -19,10 +18,7 @@ const config = {
 		rules: [{
 			test: /\.tsx?$/,
 			loader: 'ts-loader',
-			exclude: /node_modules/,
-			options: {
-
-			}
+			exclude: /node_modules/
 		}]
 	},
 	externals: [
