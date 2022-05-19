@@ -5,7 +5,7 @@
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/es6.js",
-  "types": "dist/types.d.ts",
+  "types": "dist/index.d.ts",
   "author": "Bartosz Osiński",
   "license": "MIT",
   "keywords": [
@@ -23,8 +23,6 @@
     "dist/**/*"
   ],
   "devDependencies": {
-    "@parcel/packager-ts": "2.5.0",
-    "@parcel/transformer-typescript-types": "2.5.0",
     "@testing-library/react-hooks": "^8.0.0",
     "@types/jest": "^27.4.1",
     "@types/react": "^18.0.6",
@@ -39,20 +37,24 @@
     "eslint-plugin-react-hooks": "^4.5.0",
     "eslintrc-generator": "^1.1.1",
     "jest": "^27.5.1",
-    "parcel": "^2.5.0",
     "react": "^18.0.0",
     "react-test-renderer": "^18.1.0",
     "ts-jest": "^27.1.4",
+    "ts-loader": "^9.3.0",
     "ts-node": "^10.7.0",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.3",
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2"
   },
   "scripts": {
-    "build": "parcel build",
+    "build": "yarn run build:prod",
+    "build:dev": "webpack --mode development",
+    "build:prod": "webpack --mode production",
     "test": "jest",
     "prepack": "parcel build",
-    "lint": "eslint . --ext .js --ext .ts --ext .tsx",
+    "lint": "eslint . --ext .ts --ext .tsx",
     "lint:fix": "yarn lint --fix",
-    "demo:build": "yarn --cwd ./demo build-prod",
+    "demo:build": "cd demo && yarn run build-prod && cd ..",
     "check": "yarn build && yarn test && yarn demo:build && yarn lint"
   },
   "peerDependencies": {
