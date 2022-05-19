@@ -54,6 +54,7 @@ const config = {
 			'.js',
 		],
 		alias: {
+			'react': require.resolve("react"),
 			'react-dom': '@hot-loader/react-dom',
 			'regrain': path.resolve(__dirname, '..'),
 		},

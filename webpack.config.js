@@ -6,7 +6,6 @@ const config = {
 		path: path.resolve(__dirname, 'dist'),
 		filename: 'index.js',
 		library: {
-			name: 'regrain',
 			type: "commonjs"
 		}
 	},
